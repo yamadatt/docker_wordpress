@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+   db:
+     image: mysql:latest
+#     volumes:
+#       - db_data:/var/lib/mysql
+     environment:
+       MYSQL_DATABASE: wordpress
+       MYSQL_USER: wp_user
+       MYSQL_PASSWORD: password
+       MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+     volumes:
+        - ./wordpress.sql:/docker-entrypoint-initdb.d/wordpress.sql
+
+   wordpress:
+     depends_on:
+       - db
+     image: wordpress:latest
+     ports:
+       - "8080:80"
+     environment:
+       WORDPRESS_DB_HOST: db:3306
+       WORDPRESS_DB_USER: wp_user
+       WORDPRESS_DB_PASSWORD: password
+
+   phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    depends_on:
+       - db
+    environment:
+      PMA_ARBITRARY: 1
+      PMA_HOST: db
+      PMA_USER: wp_user
+      PMA_PASSWORD: password
+    ports:
+      - 8081:80
+    volumes:
+      - /sessions
+
+#COPY wordpress.sql /docker-entrypoint-initdb.d/wordpress.sql
