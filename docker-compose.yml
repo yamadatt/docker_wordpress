@@ -2,7 +2,7 @@ version: '3'
 
 services:
    db:
-     image: mysql:latest
+     image: mysql:5.7
 #     mysqlのデータを永続化する場合は以下のvolumeオプションを有効にする。
 #     volumes:
 #       - db_data:/var/lib/mysql
