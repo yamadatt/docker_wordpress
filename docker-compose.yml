@@ -1,50 +1,31 @@
-version: '3'
-
+version: '3.1'
 
 services:
-   db:
-     image: mariadb
-#     image: mysql:5.7
-#     mysqlのデータを永続化する場合は以下のvolumeオプションを有効にする。
-     volumes:
-       - db_data:/var/lib/mysql
-     environment:
-       MYSQL_DATABASE: wordpress
-       MYSQL_USER: wp_user
-       MYSQL_PASSWORD: password
-       MYSQL_RANDOM_ROOT_PASSWORD: "yes"
-#     volumes:
-#        - ./wordpress.sql:/docker-entrypoint-initdb.d/wordpress.sql
 
-   wordpress:
-     depends_on:
-       - db
-     image: wordpress:latest
-     volumes:
-       - ./php.ini:/usr/local/etc/php/conf.d/php.ini
-       - ./html:/var/www/html
-     ports:
-       - "8080:80"
-     environment:
-       WORDPRESS_DB_HOST: db:3306
-       WORDPRESS_DB_USER: wp_user
-       WORDPRESS_DB_PASSWORD: password
-
-   phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    depends_on:
-       - db
-    environment:
-      PMA_ARBITRARY: 1
-      PMA_HOST: db
-      PMA_USER: wp_user
-      PMA_PASSWORD: password
+  wordpress:
+    image: wordpress
+    restart: always
     ports:
-      - 8081:80
+      - 8080:80
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: exampleuser
+      WORDPRESS_DB_PASSWORD: examplepass
+      WORDPRESS_DB_NAME: exampledb
     volumes:
-      - /sessions
+      - ./html:/var/www/html
+      - ./php.ini:/usr/local/etc/php/conf.d/php.ini
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: exampledb
+      MYSQL_USER: exampleuser
+      MYSQL_PASSWORD: examplepass
+      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+    volumes:
+      - db:/var/lib/mysql
 
 volumes:
-    db_data:
-
-#COPY wordpress.sql /docker-entrypoint-initdb.d/wordpress.sql
+  wordpress:
+  db:
